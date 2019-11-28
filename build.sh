@@ -2,7 +2,7 @@ set -euo pipefail
 
 mkdir -p build && cd build
 
-ls -l .
+ls -l ..
 
 cmake -DCODE_COVERAGE=ON -DCMAKE_BUILD_TYPE=Debug ..
 
