@@ -134,7 +134,9 @@ Ast_LiteralExpr::Ast_LiteralExpr(enum Ast_LiteralExpr::literal_type literal_type
     const char *first, const char *second)
     : literal_type(literal_type)
 {
-    this->name.first = first ? first : "";
+    if (first)
+        this->name.first = first;
+    
     this->name.second = second;
 }
 
@@ -160,7 +162,7 @@ std::string Ast_LiteralExpr::format() {
     {
     case Ast_LiteralExpr::LiteralTypeName:
     case Ast_LiteralExpr::LiteralTypeDetailName:
-        if (this->name.first.empty())
+        if (!this->name.first.empty())
             return this->rawf("%s.%s", this->name.first.c_str(), this->name.second.c_str());
         else
             return this->name.second;

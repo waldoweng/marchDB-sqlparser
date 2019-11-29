@@ -397,10 +397,10 @@ stmt_list: stmt ';'
     ;
 
     /**** expressions ****/
-expr: NAME          { $$ = new Ast_LiteralExpr(Ast_LiteralExpr::LiteralTypeName, "", $1); }
+expr: NAME          { $$ = new Ast_LiteralExpr(Ast_LiteralExpr::LiteralTypeName, nullptr, $1); }
     | NAME '.' NAME { $$ = new Ast_LiteralExpr(Ast_LiteralExpr::LiteralTypeDetailName, $1, $3); }
-    | USERVAR       { $$ = new Ast_LiteralExpr(Ast_LiteralExpr::LiteralTypeUserVar, "", $1); }
-    | STRING        { $$ = new Ast_LiteralExpr(Ast_LiteralExpr::LiteralTypeString, "", $1); }
+    | USERVAR       { $$ = new Ast_LiteralExpr(Ast_LiteralExpr::LiteralTypeUserVar, nullptr, $1); }
+    | STRING        { $$ = new Ast_LiteralExpr(Ast_LiteralExpr::LiteralTypeString, nullptr, $1); }
     | INTNUM        { $$ = new Ast_LiteralExpr($1); }
     | APPROXNUM     { $$ = new Ast_LiteralExpr($1); }
     | BOOL          { $$ = new Ast_LiteralExpr($1); }

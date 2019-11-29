@@ -1,3 +1,5 @@
+#include <stdio.h>
+
 #include "ast.h"
 #include "pmysql.hh"
 #include "pmysql.tab.hh"
@@ -12,9 +14,16 @@ int sqlparse(const char *str) {
     return 0;
 }
 
-int main() {
-    // sqlparse("select * from abc;");
-    sqlparse("select all distinct distinctrow high_priority straight_join sql_small_result sql_big_result sql_calc_found_rows (1+1) as abc;");
-    // sqlparse("select * from abc where a = 1 and b = 'c';");
+void print_help() {
+    printf("test_pmysql <sql>\n");
+}
+
+int main(int argc, char *argv[]) {
+    if (argc != 2) {
+        print_help();
+        return -1;
+    }
+
+    sqlparse(argv[1]);
     return 0;
 }

@@ -165,7 +165,9 @@ std::string Ast_TableFactor::format() {
             normal->alias.empty() 
                 ? ""
                 : ("AS " + normal->alias).c_str(),
-            normal->index_hint->format().c_str()
+            normal->index_hint 
+                ? normal->index_hint->format().c_str()
+                : ""
         );
     case Ast_TableFactor::FACTOR_TYPE_SUBQUERY:
         return this->rawf("%s %s",

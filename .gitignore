@@ -1,0 +1,7 @@
+tags
+build
+.vscode
+include/parser/pmysql.hh
+include/parser/pmysql.tab.hh
+parser/pmysql.cc
+parser/pmysql.tab.cc
