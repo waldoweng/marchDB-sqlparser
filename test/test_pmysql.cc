@@ -21,9 +21,11 @@ void print_help() {
 int main(int argc, char *argv[]) {
     if (argc != 2) {
         print_help();
-        return -1;
+        return 0;
     }
 
-    sqlparse(argv[1]);
+    if (sqlparse(argv[1]))
+        return -1;
+
     return 0;
 }
