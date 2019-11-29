@@ -392,8 +392,8 @@ void lyyerror(struct YYLTYPE t, const char *s, ...);
 
 %%
 
-stmt_list: stmt ';'
-    | stmt_list stmt ';'
+stmt_list: stmt ';' { delete $1; }
+    | stmt_list stmt ';' { delete $2; }
     ;
 
     /**** expressions ****/
