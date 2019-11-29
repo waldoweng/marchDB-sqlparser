@@ -7,7 +7,7 @@ AUX_SOURCE_DIRECTORY(${CMAKE_CURRENT_SOURCE_DIR} source)
 find_program(FLEX "flex")
 if(FLEX)
     add_custom_command(
-        OUTPUT ${CMAKE_CURRENT_SOURCE_DIR}/pmysql.cc ${CMAKE_SOURCE_DIR/include/parser}/pmysql.hh
+        OUTPUT ${CMAKE_CURRENT_SOURCE_DIR}/pmysql.cc ${CMAKE_SOURCE_DIR}/include/parser/pmysql.hh
         COMMAND flex -o ${CMAKE_CURRENT_SOURCE_DIR}/pmysql.cc --header-file=${CMAKE_SOURCE_DIR}/include/parser/pmysql.hh ${CMAKE_CURRENT_SOURCE_DIR}/pmysql.l
         DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/pmysql.l
         )
