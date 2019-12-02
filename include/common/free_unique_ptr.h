@@ -8,8 +8,10 @@
 struct free_deleter {
 public:
     void operator() (const char *ptr) const {
-        if (ptr)
+        if (ptr) {
+            printf("%s", ptr);
             free(const_cast<char *>(ptr));
+        }
     }
 };
 

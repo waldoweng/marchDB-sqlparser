@@ -155,7 +155,27 @@ Ast_LiteralExpr::Ast_LiteralExpr(bool bool_var)
 {
 }
 
-Ast_LiteralExpr::~Ast_LiteralExpr() {}
+Ast_LiteralExpr::~Ast_LiteralExpr() {
+    switch (this->literal_type)
+    {
+    case Ast_LiteralExpr::LiteralTypeName:
+    case Ast_LiteralExpr::LiteralTypeDetailName:
+   case Ast_LiteralExpr::LiteralTypeString:
+    case Ast_LiteralExpr::LiteralTypeUserVar:
+        if (this->name.first.get())
+            this->name.first.~unique_ptr();
+        this->name.second.~unique_ptr();
+        break;
+    case Ast_LiteralExpr::LiteralTypeIntNum:
+    case Ast_LiteralExpr::LiteralTypeApproxNum:
+    case Ast_LiteralExpr::LiteralTypeBool:
+    case Ast_LiteralExpr::LiteralTypeCurTs:
+    case Ast_LiteralExpr::LiteralTypeCurDate:
+    case Ast_LiteralExpr::LiteralTypeCurTime:
+    default:
+        break;
+    }
+}
 
 std::string Ast_LiteralExpr::format() {
     switch (this->literal_type)
@@ -192,7 +212,7 @@ Ast_Expr Ast_LiteralExpr::eval() const {
 }
 
 Ast_ArithmeticExpr::Ast_ArithmeticExpr(enum Ast_ArithmeticExpr::arithmetic_type arithmetic_type, Ast_Expr *expr)
-    : arithmetic_type(arithmetic_type), inner_type(InnerTypeUnaryOp), unary_op(expr)
+    : arithmetic_type(arithmetic_type), inner_type(Ast_ArithmeticExpr::InnerTypeUnaryOp), unary_op(expr)
 {
 }
 
