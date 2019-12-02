@@ -4,6 +4,7 @@
 #include <cstdint>
 #include <string>
 #include <vector>
+#include "free_unique_ptr.h"
 #include "ast_base.h"
 
 class Ast_Expr;
@@ -18,7 +19,7 @@ public:
 
 private:
     Ast_Expr *expr;
-    std::string alias;
+    free_unique_ptr alias;
 };
 
 class Ast_SelectExprList : public Ast_Base{

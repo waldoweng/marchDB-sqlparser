@@ -11,24 +11,26 @@ Ast_OptCSC::~Ast_OptCSC() {}
 
 
 Ast_EnumList::Ast_EnumList(const char *name) {
-    enum_list.push_back(name);
+    free_unique_ptr p(name);
+    enum_list.push_back(std::move(p));
 }
 
 Ast_EnumList::~Ast_EnumList() {}
 
 void Ast_EnumList::addEnum(const char *name) {
-    enum_list.push_back(name);
+    free_unique_ptr p(name);
+    enum_list.push_back(std::move(p));
 }
 
 std::string Ast_EnumList::format() {
     std::string str;
     if (!this->enum_list.empty())
-        str = this->indentf("%s", this->enum_list[0].c_str());
+        str = this->indentf("%s", this->enum_list[0].get());
 
-    for (std::vector<std::string>::iterator it = enum_list.begin() + 1;
+    for (std::vector<free_unique_ptr>::iterator it = enum_list.begin() + 1;
         it != enum_list.end();
         it ++) {
-        str = this->rawf(", %s", it->c_str());
+        str = this->rawf(", %s", it->get());
     }
     return str;
 }
@@ -88,8 +90,13 @@ Ast_DataType::Ast_DataType(
         str = new Ast_DataType::StringType();
         str->length = length;
         str->binary_flag = binary_flag;
-        str->charset = (opt_csc->csc_type == Ast_OptCSC::CSC_TYPE_CHARSET) ? opt_csc->value : "";
-        str->collate = (opt_csc->csc_type == Ast_OptCSC::CSC_TYPE_COLLATE) ? opt_csc->value : "";
+        if (opt_csc->csc_type == Ast_OptCSC::CSC_TYPE_CHARSET) {
+            str->charset = std::move(opt_csc->value);
+            delete opt_csc;
+        } else if (opt_csc->csc_type == Ast_OptCSC::CSC_TYPE_COLLATE) {
+            str->collate = std::move(opt_csc->value);
+            delete opt_csc;
+        }
         break;
     default:
         break;
@@ -109,8 +116,13 @@ Ast_DataType::Ast_DataType(
     case Ast_DataType::DATA_TYPE_SET:
         compond = new Ast_DataType::CompondType();
         compond->enum_list = enum_list;
-        compond->charset = (opt_csc->csc_type == Ast_OptCSC::CSC_TYPE_CHARSET) ? opt_csc->value : "";
-        compond->collate = (opt_csc->csc_type == Ast_OptCSC::CSC_TYPE_COLLATE) ? opt_csc->value : "";
+        if (opt_csc->csc_type == Ast_OptCSC::CSC_TYPE_CHARSET) {
+            compond->charset = std::move(opt_csc->value);
+            delete opt_csc;
+        } else if (opt_csc->csc_type == Ast_OptCSC::CSC_TYPE_COLLATE) {
+            compond->collate = std::move(opt_csc->value);
+            delete opt_csc;
+        }
         break;
     default:
         break;
@@ -192,7 +204,7 @@ std::string Ast_DataType::format(enum Ast_DataType::data_type data_type) {
     return this->rawf("%s", typeName(data_type));
 }
 
-std::string Ast_DataType::format(enum Ast_DataType::data_type data_type, Ast_DataType::NumericType numeric) {
+std::string Ast_DataType::format(enum Ast_DataType::data_type data_type, Ast_DataType::NumericType &numeric) {
     return this->rawf("%s(%d) %s %s", 
         typeName(data_type),
         numeric.length,
@@ -201,21 +213,21 @@ std::string Ast_DataType::format(enum Ast_DataType::data_type data_type, Ast_Dat
     );
 }
 
-std::string Ast_DataType::format(enum Ast_DataType::data_type data_type, Ast_DataType::StringType str) {
+std::string Ast_DataType::format(enum Ast_DataType::data_type data_type, Ast_DataType::StringType &str) {
     return this->rawf("%s(%d) %s %s %s",
         typeName(data_type),
         str.length,
         str.binary_flag ? "BINARY" : "",
-        str.charset.empty() ? str.charset.c_str() : "",
-        str.collate.empty() ? str.collate.c_str() : ""
+        str.charset.get() ? str.charset.get() : "",
+        str.collate.get() ? str.collate.get() : ""
     );
 }
 
-std::string Ast_DataType::format(enum Ast_DataType::data_type data_type, Ast_DataType::CompondType compond) {
+std::string Ast_DataType::format(enum Ast_DataType::data_type data_type, Ast_DataType::CompondType &compond) {
     std::string str = this->rawf("%s %s %s(",
         typeName(data_type),
-        compond.charset.empty() ? compond.charset.c_str() : "",
-        compond.collate.empty() ? compond.collate.c_str() : ""
+        compond.charset.get() ? compond.charset.get() : "",
+        compond.collate.get() ? compond.collate.get() : ""
     );
 
     str += compond.enum_list->format();
@@ -443,7 +455,7 @@ std::string Ast_CreateDefinition::format() {
         break;
     case Ast_CreateDefinition::DATA_DEFINITION:
         str = this->rawf("%s %s %s", 
-            this->data_def->name.c_str(),
+            this->data_def->name.get(),
             this->data_def->data_type->format().c_str(),
             this->data_def->column_attrs->format().c_str()
         );
@@ -569,10 +581,14 @@ Ast_CreateTableStmt::~Ast_CreateTableStmt() {
 }
 
 std::string Ast_CreateTableStmt::format() {
+    char buffer[256];
+    if (this->database_name.get())
+        snprintf(buffer, sizeof(buffer), "%s.%s", this->database_name.get(), this->name.get());
+
     return this->rawf("CREATE %s TABLE %s %s %s %s",
         opt_temporary ? "TEMPORARY" : "",
         opt_if_not_exists ? "IF NOT EXISTS" : "",
-        this->database_name.empty() ? this->name.c_str() : (this->database_name + '.' + this->name).c_str(),
+        this->database_name.get() ? this->name.get() : buffer,
         this->create_col_list ? ('(' + this->create_col_list->format() + ')').c_str() : "",
         this->create_select_stmt ? this->create_select_stmt->format().c_str() : ""
     );

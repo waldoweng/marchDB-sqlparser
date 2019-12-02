@@ -3,6 +3,7 @@
 
 #include <string>
 #include <vector>
+#include "free_unique_ptr.h"
 #include "ast_base.h"
 
 class Ast_SelectStmt;
@@ -117,11 +118,10 @@ public:
 
 private:
     literal_type literal_type;
-    /* TODO switch to union temporary */
     union {
         struct {
-            std::string first;
-            std::string second;
+            free_unique_ptr first;
+            free_unique_ptr second;
         } name;
         int int_var;
         double float_var;
@@ -262,7 +262,7 @@ public:
     virtual std::string format();
 
 private:
-    std::string name;
+    free_unique_ptr name;
     Ast_Expr *expr;
 };
 
@@ -343,7 +343,7 @@ public:
     virtual std::string format();
 
 private:
-    std::string func_name;
+    free_unique_ptr func_name;
     Ast_ValList *params;
 };
 

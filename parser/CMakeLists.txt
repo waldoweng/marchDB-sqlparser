@@ -1,4 +1,5 @@
 include_directories(${CMAKE_SOURCE_DIR}/include/ast)
+include_directories(${CMAKE_SOURCE_DIR}/include/common)
 include_directories(${CMAKE_SOURCE_DIR}/include/parser)
 
 AUX_SOURCE_DIRECTORY(${CMAKE_CURRENT_SOURCE_DIR} source)

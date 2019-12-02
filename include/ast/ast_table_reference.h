@@ -3,6 +3,7 @@
 
 #include <string>
 #include <vector>
+#include "free_unique_ptr.h"
 #include "ast_base.h"
 
 class Ast_Expr;
@@ -24,7 +25,7 @@ public:
     void addName(const char *name);
 
 private:
-    std::vector<std::string> names;
+    std::vector<free_unique_ptr> names;
 };
 
 class Ast_IndexHint : public Ast_Base {
@@ -93,9 +94,9 @@ public:
             const char *alias, Ast_IndexHint *index_hint);
         ~TableFactorNormal();
     public:
-        std::string database_name;
-        std::string name;
-        std::string alias;
+        free_unique_ptr database_name;
+        free_unique_ptr name;
+        free_unique_ptr alias;
         Ast_IndexHint *index_hint;
     };
 
@@ -105,7 +106,7 @@ public:
         ~TableFactorSubquery();
     public:
         Ast_TableSubquery *subquery;
-        std::string name;
+        free_unique_ptr name;
     };
 
     class TableFactorReferences {

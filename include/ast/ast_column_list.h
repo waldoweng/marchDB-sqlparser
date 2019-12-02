@@ -3,6 +3,7 @@
 
 #include <string>
 #include <vector>
+#include "free_unique_ptr.h"
 #include "ast_base.h"
 
 class Ast_ColumnList : public Ast_Base{
@@ -17,7 +18,7 @@ public:
     void addName(const char *name);
 
 private:
-    std::vector<std::string> names;
+    std::vector<free_unique_ptr> names;
 };
 
 #endif

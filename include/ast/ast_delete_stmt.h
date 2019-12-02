@@ -4,6 +4,7 @@
 #include <cstdint>
 #include <string>
 #include <vector>
+#include "free_unique_ptr.h"
 #include "ast_base.h"
 
 class Ast_OptWhere;
@@ -23,7 +24,7 @@ public:
     void addName(const char *name);
 
 private:
-    std::vector<std::string> names;
+    std::vector<free_unique_ptr> names;
 };
 
 
@@ -53,7 +54,7 @@ public:
         ~SingleTableDeleteStmt();
     public:
         enum _delete_opts delete_opts;
-        std::string name;
+        free_unique_ptr name;
         Ast_OptWhere *opt_where;
         Ast_OptOrderBy *opt_orderby;
         Ast_OptLimit *opt_limit;

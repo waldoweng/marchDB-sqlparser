@@ -4,6 +4,7 @@
 #include <map>
 #include <string>
 #include <vector>
+#include "free_unique_ptr.h"
 #include "ast_base.h"
 
 class Ast_ColumnList;
@@ -21,7 +22,7 @@ public:
 
 public:
     csc_type csc_type;
-    std::string value;
+    free_unique_ptr value;
 };
 
 class Ast_EnumList : public Ast_Base {
@@ -36,7 +37,7 @@ public:
     void addEnum(const char *name);
 
 private:
-    std::vector<std::string> enum_list;
+    std::vector<free_unique_ptr> enum_list;
 };
 
 class Ast_DataType : public Ast_Base {
@@ -82,14 +83,14 @@ public:
     struct StringType {
         uint32_t length;
         bool binary_flag;
-        std::string charset;
-        std::string collate;
+        free_unique_ptr charset;
+        free_unique_ptr collate;
     };
 
     struct CompondType {
         Ast_EnumList *enum_list;
-        std::string charset;
-        std::string collate;
+        free_unique_ptr charset;
+        free_unique_ptr collate;
     };
 
 public:
@@ -105,9 +106,9 @@ public:
 private:
     const char * typeName(data_type data_type);
     std::string format(data_type data_type);
-    std::string format(data_type data_type, NumericType numeric);
-    std::string format(data_type data_type, StringType str);
-    std::string format(data_type data_type, CompondType compond);
+    std::string format(data_type data_type, NumericType &numeric);
+    std::string format(data_type data_type, StringType &str);
+    std::string format(data_type data_type, CompondType &compond);
 
 private:
     data_type data_type;
@@ -179,7 +180,7 @@ public:
         explicit DataDefinition(const char *name, Ast_DataType *data_type, Ast_ColumnAttrs *attrs);
         ~DataDefinition();
     public:
-        std::string name;
+        free_unique_ptr name;
         Ast_DataType *data_type;
         Ast_ColumnAttrs *column_attrs;
     };
@@ -271,8 +272,8 @@ public:
 private:
     bool opt_temporary;
     bool opt_if_not_exists;
-    std::string database_name;
-    std::string name;
+    free_unique_ptr database_name;
+    free_unique_ptr name;
     Ast_CreateColList *create_col_list;
     Ast_CreateSelectStmt *create_select_stmt;
 };

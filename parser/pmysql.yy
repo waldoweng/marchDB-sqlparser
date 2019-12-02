@@ -390,6 +390,8 @@ void lyyerror(struct YYLTYPE t, const char *s, ...);
 
 %start stmt_list
 
+%destructor { printf ("free at %d %s\n",@$.first_line, $$); free($$); } <strval>
+
 %%
 
 stmt_list: stmt ';' { delete $1; }
@@ -596,7 +598,7 @@ select_expr: expr opt_as_alias { $$ = new Ast_SelectExpr($1, $2); }
 
 opt_as_alias: AS NAME   { $$ = $2; }
     | NAME              { $$ = $1; }
-    | /* nil */         { $$ = NULL; }
+    | /* nil */         { $$ = nullptr; }
     ;
 
 table_references: table_reference { $$ = new Ast_TableReferences($1); }

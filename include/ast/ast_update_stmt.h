@@ -4,6 +4,7 @@
 #include <cstdint>
 #include <string>
 #include <vector>
+#include "free_unique_ptr.h"
 #include "ast_base.h"
 
 class Ast_Expr;
@@ -19,8 +20,8 @@ public:
         explicit UpdateAsgn(const char *tablename, const char *name, Ast_Expr *expr);
         ~UpdateAsgn();
     public:
-        std::string tablename;
-        std::string name;
+        free_unique_ptr tablename;
+        free_unique_ptr name;
         Ast_Expr *expr;
     };
 public:

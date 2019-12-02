@@ -11,7 +11,7 @@ Ast_SetExpr::~Ast_SetExpr() {
 }
 
 std::string Ast_SetExpr::format() {
-    return this->rawf("%s = %s", this->uservar.c_str(), this->expr->format().c_str());
+    return this->rawf("%s = %s", this->uservar.get(), this->expr->format().c_str());
 }
 
 Ast_SetList::Ast_SetList(Ast_SetExpr *expr) {

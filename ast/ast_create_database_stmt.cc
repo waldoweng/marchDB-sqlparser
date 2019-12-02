@@ -8,7 +8,7 @@ Ast_CreateDatabaseStmt::~Ast_CreateDatabaseStmt() {}
 
 std::string Ast_CreateDatabaseStmt::format() {
     if (opt_if_not_exists)
-        return this->indentf("CREATE IF NOT EXIST DATABASE %s", name.c_str());
+        return this->indentf("CREATE IF NOT EXIST DATABASE %s", name.get());
     else
-        return this->indentf("CREATE DATABASE %s", name.c_str());
+        return this->indentf("CREATE DATABASE %s", name.get());
 }

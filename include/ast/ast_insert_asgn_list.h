@@ -3,6 +3,7 @@
 
 #include <vector>
 #include <string>
+#include <free_unique_ptr.h>
 #include "ast_base.h"
 
 class Ast_Expr;
@@ -18,7 +19,7 @@ public:
         InsertAsgn(const char *name, Ast_Expr *expr);
         ~InsertAsgn();
     public:
-        std::string name;
+        free_unique_ptr name;
         Ast_Expr *expr;
     };
 

@@ -1,4 +1,5 @@
 #include <time.h>
+#include "free_unique_ptr.h"
 #include "ast_expr.h"
 #include "ast_select_stmt.h"
 
@@ -132,12 +133,11 @@ Ast_LiteralExpr::Ast_LiteralExpr(enum Ast_LiteralExpr::literal_type literal_type
 
 Ast_LiteralExpr::Ast_LiteralExpr(enum Ast_LiteralExpr::literal_type literal_type, 
     const char *first, const char *second)
-    : literal_type(literal_type)
+    : literal_type(literal_type), name()
 {
     if (first)
-        this->name.first = first;
-    
-    this->name.second = second;
+        this->name.first.reset(first);
+    this->name.second.reset(second);
 }
 
 Ast_LiteralExpr::Ast_LiteralExpr(int int_var)
@@ -162,14 +162,14 @@ std::string Ast_LiteralExpr::format() {
     {
     case Ast_LiteralExpr::LiteralTypeName:
     case Ast_LiteralExpr::LiteralTypeDetailName:
-        if (!this->name.first.empty())
-            return this->rawf("%s.%s", this->name.first.c_str(), this->name.second.c_str());
+        if (this->name.first.get())
+            return this->rawf("%s.%s", this->name.first.get(), this->name.second.get());
         else
-            return this->name.second;
+            return this->name.second.get();
     case Ast_LiteralExpr::LiteralTypeString:
-        return this->rawf("%s", this->name.second.c_str());
+        return this->rawf("%s", this->name.second.get());
     case Ast_LiteralExpr::LiteralTypeUserVar:
-        return this->rawf("@%s", this->name.second.c_str());
+        return this->rawf("@%s", this->name.second.get());
     case Ast_LiteralExpr::LiteralTypeIntNum:
         return this->rawf("%d", this->int_var);
     case Ast_LiteralExpr::LiteralTypeApproxNum:
@@ -420,7 +420,7 @@ Ast_AsgnExpr::~Ast_AsgnExpr() {
 
 std::string Ast_AsgnExpr::format() {
     return this->rawf("%s = %s", 
-        this->name.c_str(),
+        this->name.get(),
         this->expr->format().c_str()
     );
 }
@@ -548,7 +548,7 @@ Ast_RegularFunctionExpr::~Ast_RegularFunctionExpr() {
 
 std::string Ast_RegularFunctionExpr::format() {
     return this->rawf("%s(%s)", 
-        this->func_name.c_str(),
+        this->func_name.get(),
         this->params->format().c_str()
     );
 }

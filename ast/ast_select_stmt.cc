@@ -14,8 +14,8 @@ Ast_SelectExpr::~Ast_SelectExpr() {
 }
 
 std::string Ast_SelectExpr::format() {
-    if(!alias.empty())
-        return this->rawf("%s AS %s", this->expr->format().c_str(), alias.c_str());
+    if(alias.get())
+        return this->rawf("%s AS %s", this->expr->format().c_str(), alias.get());
     else
         return this->expr->format();
 }

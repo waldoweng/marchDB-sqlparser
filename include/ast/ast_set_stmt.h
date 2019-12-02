@@ -4,6 +4,7 @@
 #include <cstdint>
 #include <string>
 #include <vector>
+#include "free_unique_ptr.h"
 #include "ast_base.h"
 
 class Ast_Expr;
@@ -17,7 +18,7 @@ public:
     virtual std::string format();
 
 private:
-    std::string uservar;
+    free_unique_ptr uservar;
     Ast_Expr *expr;
 };
 

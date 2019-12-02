@@ -3,7 +3,8 @@
 #include "ast_table_reference.h"
 
 Ast_DeleteList::Ast_DeleteList(const char *name) {
-    names.push_back(name);
+    free_unique_ptr p(name);
+    names.push_back(std::move(p));
 }
 
 Ast_DeleteList::~Ast_DeleteList() {}
@@ -13,19 +14,22 @@ std::string Ast_DeleteList::format() {
 
     if (!names.empty()) {
 
-        tmp = names[0];
+        tmp = names[0].get();
 
-        for (std::vector<std::string>::iterator it = names.begin() + 1;
+        for (std::vector<free_unique_ptr>::iterator it = names.begin() + 1;
             it != names.end();
-            it ++)
-            tmp += (' ' + *it);
+            it ++) {
+            tmp += ' ';
+            tmp += it->get();
+        }
     }
 
     return tmp;
 }
 
 void Ast_DeleteList::addName(const char *name) {
-    names.push_back(name);
+    free_unique_ptr p(name);
+    names.push_back(std::move(p));
 }
 
 
@@ -102,7 +106,7 @@ std::string Ast_DeleteStmt::format() {
     case Ast_DeleteStmt::SINGLE_TABLE:
         str = this->rawf("DELETE %s FROM %s\n%s\n%s\n%s",
             this->deleteOptName(this->single_stmt->delete_opts),
-            this->single_stmt->name.c_str(),
+            this->single_stmt->name.get(),
             this->single_stmt->opt_where->format().c_str(),
             this->single_stmt->opt_orderby->format().c_str(),
             this->single_stmt->opt_limit->format().c_str()

@@ -3,6 +3,7 @@
 
 #include <cstdint>
 #include <string>
+#include "free_unique_ptr.h"
 #include "ast_base.h"
 
 class Ast_CreateDatabaseStmt : public Ast_Base {
@@ -15,7 +16,7 @@ public:
 
 private:
     bool opt_if_not_exists;
-    std::string name;
+    free_unique_ptr name;
 };
 
 #endif

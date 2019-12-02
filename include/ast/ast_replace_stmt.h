@@ -3,6 +3,7 @@
 
 #include <cstdint>
 #include <string>
+#include "free_unique_ptr.h"
 #include "ast_base.h"
 
 class Ast_OptColNames;
@@ -33,7 +34,7 @@ public:
         ~ReplaceStmtValList();
     public:
         enum _replace_opts replace_opts;
-        std::string name;
+        free_unique_ptr name;
         Ast_OptColNames *opt_col_names;
         Ast_InsertValList *insert_val_list;
         Ast_OptOnDupUpdate *opt_dupupdate;
@@ -46,7 +47,7 @@ public:
         ~ReplaceStmtAsgnList();
     public:
         enum _replace_opts replace_opts;
-        std::string name; 
+        free_unique_ptr name; 
         Ast_InsertAsgnList *insert_asgn_list;
         Ast_OptOnDupUpdate *opt_ondupupdate;
     };
@@ -58,7 +59,7 @@ public:
         virtual ~ReplaceStmtSelect();
     public:
         enum _replace_opts replace_opts;
-        std::string name;
+        free_unique_ptr name;
         Ast_OptColNames *opt_col_names;
         Ast_SelectStmt *select_stmt;
         Ast_OptOnDupUpdate *opt_ondupupdate;

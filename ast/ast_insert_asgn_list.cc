@@ -35,7 +35,7 @@ std::string Ast_InsertAsgnList::format() {
 
     if (!asgn_list.empty()) {
         str = this->rawf("%s = %s", 
-            asgn_list[0]->name.c_str(), 
+            asgn_list[0]->name.get(), 
             asgn_list[0]->expr->format().c_str()
         );
 
@@ -44,7 +44,7 @@ std::string Ast_InsertAsgnList::format() {
             it ++)
         {
             str += this->rawf("\n%s = %s", 
-                (*it)->name.c_str(),
+                (*it)->name.get(),
                 (*it)->expr->format().c_str()
             );
         }

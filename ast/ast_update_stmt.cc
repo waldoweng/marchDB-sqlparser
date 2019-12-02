@@ -51,12 +51,15 @@ void Ast_UpdateAsgnList::addUpdateAsgn(const char *tablename, const char *name, 
 
 std::string Ast_UpdateAsgnList::format() {
     std::string str;
+    char name_buffer[1024];
 
     if (!this->update_asgn_list.empty()) {
+        if (this->update_asgn_list[0]->tablename.get())
+            snprintf(name_buffer, sizeof(name_buffer), "%s.%s", 
+                this->update_asgn_list[0]->tablename.get(), this->update_asgn_list[0]->name.get());
+
         str = this->rawf("%s = %s", 
-            this->update_asgn_list[0]->tablename.empty() 
-                ? this->update_asgn_list[0]->name.c_str() 
-                : (this->update_asgn_list[0]->name + this->update_asgn_list[0]->tablename).c_str(),
+            this->update_asgn_list[0]->tablename.get() ? name_buffer: this->update_asgn_list[0]->name.get(),
             this->update_asgn_list[0]->expr->format().c_str()
         );
 
@@ -64,9 +67,12 @@ std::string Ast_UpdateAsgnList::format() {
             it != this->update_asgn_list.end();
             it ++)
         {
+            if ((*it)->tablename.get())
+                snprintf(name_buffer, sizeof(name_buffer), "%s.%s", (*it)->tablename.get(), (*it)->name.get());
+
             str += ", ";
             str += this->rawf("%s = %s", 
-                (*it)->tablename.empty() ? (*it)->name.c_str() : ((*it)->name + (*it)->tablename).c_str(),
+                (*it)->tablename.get() ? name_buffer : (*it)->name.get(),
                 (*it)->expr->format().c_str()
             );
         }

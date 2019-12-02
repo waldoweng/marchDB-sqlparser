@@ -4,7 +4,8 @@
 #include "ast_column_list.h"
 
 Ast_IndexList::Ast_IndexList(const char *name) {
-    names.push_back(name);
+    free_unique_ptr p(name);
+    names.push_back(std::move(p));
 }
 
 Ast_IndexList::~Ast_IndexList() {}
@@ -12,18 +13,20 @@ Ast_IndexList::~Ast_IndexList() {}
 std::string Ast_IndexList::format() {
     std::string tmp;
 
-    for (std::vector<std::string>::iterator it = names.begin();
+    for (std::vector<free_unique_ptr>::iterator it = names.begin();
         it != names.end();
         it ++)
     {
-        tmp += (*it + ", ");
+        tmp += it->get();
+        tmp += ", ";
     }
 
     return tmp;
 }
 
 void Ast_IndexList::addName(const char *name) {
-    names.push_back(name);
+    free_unique_ptr p(name);
+    names.push_back(std::move(p));
 }
 
 Ast_IndexHint::Ast_IndexHint(bool use, bool for_join, Ast_IndexList *index_list) 
@@ -114,14 +117,14 @@ Ast_TableFactor::TableFactorReferences::~TableFactorReferences()
 
 Ast_TableFactor::Ast_TableFactor(const char *name, const char *alias, Ast_IndexHint *index_hint)
     : factor_type(Ast_TableFactor::FACTOR_TYPE_NORMAL),
-        normal(new TableFactorNormal("", name, alias ? alias : "", index_hint))
+        normal(new TableFactorNormal(nullptr, name, alias ? alias : nullptr, index_hint))
 {
 }
 
 Ast_TableFactor::Ast_TableFactor(const char *database_name, const char *name, 
     const char *alias, Ast_IndexHint *index_hint)
     : factor_type(Ast_TableFactor::FACTOR_TYPE_NORMAL),
-        normal(new TableFactorNormal(database_name, name, alias ? alias : "", index_hint))
+        normal(new TableFactorNormal(database_name, name, alias ? alias : nullptr, index_hint))
 {
 }
 
@@ -155,24 +158,29 @@ Ast_TableFactor::~Ast_TableFactor() {
 }
 
 std::string Ast_TableFactor::format() {
+    char tablename_buffer[1024];
+    char alias_buffer[1024];
+    char subquery_buffer[1024];
+
     switch (this->factor_type)
     {
     case Ast_TableFactor::FACTOR_TYPE_NORMAL:
+        if (normal->database_name.get())
+            snprintf(tablename_buffer, sizeof(tablename_buffer), "%s.%s", normal->database_name.get(), normal->name.get());
+        if (normal->alias.get())
+            snprintf(alias_buffer, sizeof(alias_buffer), "AS %s", normal->alias.get());
+
         return this->rawf("%s %s %s", 
-            normal->database_name.empty() 
-                ? normal->name.c_str() 
-                : (normal->database_name + '.' + normal->name).c_str(), 
-            normal->alias.empty() 
-                ? ""
-                : ("AS " + normal->alias).c_str(),
-            normal->index_hint 
-                ? normal->index_hint->format().c_str()
-                : ""
+            normal->database_name.get() ? tablename_buffer : normal->name.get(),
+            normal->alias.get() ? alias_buffer : "",
+            normal->index_hint ? normal->index_hint->format().c_str() : ""
         );
     case Ast_TableFactor::FACTOR_TYPE_SUBQUERY:
+        if (this->subquery->name.get())
+            snprintf(subquery_buffer, sizeof(subquery_buffer), "AS %s", this->subquery->name.get());
         return this->rawf("%s %s",
             this->subquery->subquery->format().c_str(),
-            this->subquery->name.empty() ? "" : ("AS " + this->subquery->name).c_str()
+            this->subquery->name.get() ? subquery_buffer : ""
         );
     case Ast_TableFactor::FACTOR_TYPE_REFERENCES:
         return this->rawf("(%s)", this->references->references->format().c_str());
