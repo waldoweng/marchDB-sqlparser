@@ -5,7 +5,7 @@
 #include "ast_opts.h"
 
 Ast_SelectExpr::Ast_SelectExpr(Ast_Expr *expr, const char *alias) 
-    : expr(expr), alias(alias ? alias : "")
+    : expr(expr), alias(alias ? alias : nullptr)
 {
 }
 
