@@ -590,10 +590,11 @@ select_opts: /* nil */  { $$ = 0; }
 
 select_expr_list: select_expr { $$ = new Ast_SelectExprList($1); }
     | select_expr_list ',' select_expr { $1->addSelectExpr($3); $$ = $1; }
-    | '*' { $$ = new Ast_SelectExprList(); }
     ;
 
 select_expr: expr opt_as_alias { $$ = new Ast_SelectExpr($1, $2); }
+    | NAME '.' '*' { $$ = nullptr; }
+    | '*' { $$ = nullptr; }
     ;
 
 opt_as_alias: AS NAME   { $$ = $2; }

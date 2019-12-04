@@ -142,7 +142,6 @@ public:
 public:
     explicit Ast_JoinTable(Ast_TableReference *reference, join_type join_type, 
         Ast_TableFactor *table_factor, Ast_JoinCondition *join_condition);
-    explicit Ast_JoinTable(Ast_TableReference *reference, Ast_TableFactor *table_factor);
     explicit Ast_JoinTable(Ast_TableReference *reference, join_type join_type, 
         Ast_TableFactor *table_factor, Ast_Expr *expr);
     explicit Ast_JoinTable(Ast_TableReference *reference, join_type join_type, 

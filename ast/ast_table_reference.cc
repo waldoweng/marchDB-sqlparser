@@ -196,12 +196,6 @@ Ast_JoinTable::Ast_JoinTable(Ast_TableReference *reference, enum Ast_JoinTable::
 {
 }
 
-Ast_JoinTable::Ast_JoinTable(Ast_TableReference *reference, Ast_TableFactor *table_factor)
-    : reference(reference), join_type(Ast_JoinTable::JOIN_TABLE_STRAIGHT_JOIN),
-        table_factor(table_factor), join_condition(nullptr)
-{
-}
-
 Ast_JoinTable::Ast_JoinTable(Ast_TableReference *reference, enum Ast_JoinTable::join_type join_type, 
     Ast_TableFactor *table_factor, Ast_Expr *expr)
     : reference(reference), join_type(join_type), table_factor(table_factor), 
