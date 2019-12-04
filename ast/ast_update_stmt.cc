@@ -15,7 +15,7 @@ Ast_UpdateAsgnList::UpdateAsgn::~UpdateAsgn() {
 Ast_UpdateAsgnList::Ast_UpdateAsgnList(const char *name, Ast_Expr *expr)
 {
     this->update_asgn_list.push_back(
-        new Ast_UpdateAsgnList::UpdateAsgn("", name, expr)
+        new Ast_UpdateAsgnList::UpdateAsgn(nullptr, name, expr)
     );
 }
 
@@ -38,7 +38,7 @@ Ast_UpdateAsgnList::~Ast_UpdateAsgnList() {
 void Ast_UpdateAsgnList::addUpdateAsgn(const char *name, Ast_Expr *expr)
 {
     this->update_asgn_list.push_back(
-        new Ast_UpdateAsgnList::UpdateAsgn("", name, expr)
+        new Ast_UpdateAsgnList::UpdateAsgn(nullptr, name, expr)
     );
 }
 

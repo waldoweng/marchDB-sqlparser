@@ -13,26 +13,30 @@ Ast_GroupByList::GroupByItem::~GroupByItem() {
 }
 
 Ast_GroupByList::Ast_GroupByList(Ast_Expr *expr, bool asc) {
-    groupby_list.push_back(Ast_GroupByList::GroupByItem(expr, asc));
+    groupby_list.push_back(new Ast_GroupByList::GroupByItem(expr, asc));
 }
 
-Ast_GroupByList::~Ast_GroupByList() {}
+Ast_GroupByList::~Ast_GroupByList() {
+    for (std::vector<Ast_GroupByList::GroupByItem *>::iterator it = groupby_list.begin();
+        it != groupby_list.end(); 
+        ++it
+    ) {
+        delete *it;
+    }
+}
 
 void Ast_GroupByList::addGroupBy(Ast_Expr *expr, bool asc) {
-    groupby_list.push_back(Ast_GroupByList::GroupByItem(expr, asc));
+    groupby_list.push_back(new Ast_GroupByList::GroupByItem(expr, asc));
 }
 
 std::string Ast_GroupByList::format() {
     std::string str;
 
-    for (std::vector<Ast_GroupByList::GroupByItem>::iterator it = groupby_list.begin();
+    for (std::vector<Ast_GroupByList::GroupByItem *>::iterator it = groupby_list.begin();
         it != groupby_list.end();
         ++it
     ) {
-        str += this->rawf("GROUP BY %s %s",
-            it->expr->format().c_str(),
-            it->asc ? "ASC" : "DESC"
-        );
+        str += this->rawf("%s %s", (*it)->expr->format().c_str(), (*it)->asc ? "ASC" : "DESC");
     }
 
     return str;

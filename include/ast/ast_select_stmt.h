@@ -12,14 +12,27 @@ class Ast_Expr;
 class Ast_SelectExpr : public Ast_Base {
 public:
     explicit Ast_SelectExpr(Ast_Expr *expr, const char *alias);
+    explicit Ast_SelectExpr(const char *tablename);
     virtual ~Ast_SelectExpr();
 
 public:
     virtual std::string format();
 
 private:
-    Ast_Expr *expr;
-    free_unique_ptr alias;
+    enum _inner_type {
+        INNER_TYPE_EXPR,
+        INNER_TYPE_ALL
+    };
+
+private:
+    enum _inner_type inner_type;
+    union {
+        struct {
+            Ast_Expr *expr;
+            free_unique_ptr alias;
+        } expr;
+        free_unique_ptr all;
+    };
 };
 
 class Ast_SelectExprList : public Ast_Base{
@@ -27,7 +40,6 @@ public:
     const static int SELECTALL = 0;
 
 public:
-    explicit Ast_SelectExprList();
     explicit Ast_SelectExprList(Ast_SelectExpr *expr);
     virtual ~Ast_SelectExprList();
 

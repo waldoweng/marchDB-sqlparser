@@ -5,24 +5,53 @@
 #include "ast_opts.h"
 
 Ast_SelectExpr::Ast_SelectExpr(Ast_Expr *expr, const char *alias) 
-    : expr(expr), alias(alias ? alias : nullptr)
+    : inner_type(Ast_SelectExpr::INNER_TYPE_EXPR), expr()
 {
+    this->expr.expr = expr;
+    if (alias)
+        this->expr.alias.reset(alias);
+}
+
+Ast_SelectExpr::Ast_SelectExpr(const char *tablename)
+    : inner_type(Ast_SelectExpr::INNER_TYPE_ALL), all()
+{
+    if (tablename) this->all.reset(tablename);
 }
 
 Ast_SelectExpr::~Ast_SelectExpr() {
-    if (expr) delete expr;
+    switch (this->inner_type)
+    {
+    case Ast_SelectExpr::INNER_TYPE_EXPR:
+        delete this->expr.expr;
+        this->expr.alias.~unique_ptr();
+        break;
+    case Ast_SelectExpr::INNER_TYPE_ALL:
+        this->all.~unique_ptr();
+        break;
+    default:
+        break;
+    }
 }
 
 std::string Ast_SelectExpr::format() {
-    if(alias.get())
-        return this->rawf("%s AS %s", this->expr->format().c_str(), alias.get());
-    else
-        return this->expr->format();
-}
+    switch (this->inner_type)
+    {
+    case Ast_SelectExpr::INNER_TYPE_EXPR:
+        if(expr.alias.get())
+            return this->rawf("%s AS %s", expr.expr->format().c_str(), expr.alias.get());
+        else
+            return expr.expr->format();
+    case Ast_SelectExpr::INNER_TYPE_ALL:
+        if (all.get())
+            return this->rawf("%s.*", all.get());
+        else
+            return "*";
+        break;
+    default:
+        break;
+    }
 
-Ast_SelectExprList::Ast_SelectExprList()
-{
-    exprs.push_back(nullptr);
+    return "";
 }
 
 Ast_SelectExprList::Ast_SelectExprList(Ast_SelectExpr *expr) {
@@ -46,16 +75,13 @@ std::string Ast_SelectExprList::format() {
     std::string str;
 
     if (!exprs.empty()) {
-        str = (exprs[0] ? exprs[0]->format() : "*");
+        str = exprs[0]->format();
 
         for (std::vector<Ast_SelectExpr *>::iterator it = exprs.begin() + 1;
             it != exprs.end();
             it ++)
         {
-            if (*it)
-                str += (", " + (*it)->format());
-            else
-                str += ", *";
+            str += (", " + (*it)->format());
         }
     }
 

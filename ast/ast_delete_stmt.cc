@@ -107,17 +107,17 @@ std::string Ast_DeleteStmt::format() {
         str = this->rawf("DELETE %s FROM %s\n%s\n%s\n%s",
             this->deleteOptName(this->single_stmt->delete_opts),
             this->single_stmt->name.get(),
-            this->single_stmt->opt_where->format().c_str(),
-            this->single_stmt->opt_orderby->format().c_str(),
-            this->single_stmt->opt_limit->format().c_str()
+            this->single_stmt->opt_where ? this->single_stmt->opt_where->format().c_str() : "",
+            this->single_stmt->opt_orderby ? this->single_stmt->opt_orderby->format().c_str() : "",
+            this->single_stmt->opt_limit ? this->single_stmt->opt_limit->format().c_str() : ""
         );
         break;
     case Ast_DeleteStmt::MULTIPLE_TABLE:
         str = this->rawf("DELETE %s %s FROM %s\n%s", 
             this->deleteOptName(this->multi_stmt->delete_opts),
-            this->multi_stmt->delete_list->format().c_str(),
-            this->multi_stmt->table_references->format().c_str(),
-            this->multi_stmt->opt_where->format().c_str()
+            this->multi_stmt->delete_list ? this->multi_stmt->delete_list->format().c_str() : "",
+            this->multi_stmt->table_references ? this->multi_stmt->table_references->format().c_str() : "",
+            this->multi_stmt->opt_where ? this->multi_stmt->opt_where->format().c_str() : ""
         );
         break;
     default:

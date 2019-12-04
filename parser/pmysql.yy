@@ -394,8 +394,8 @@ void lyyerror(struct YYLTYPE t, const char *s, ...);
 
 %%
 
-stmt_list: stmt ';' { delete $1; }
-    | stmt_list stmt ';' { delete $2; }
+stmt_list: stmt ';' {  printf("%s", $1->format().c_str()); delete $1; }
+    | stmt_list stmt ';' {  printf("%s", $2->format().c_str()); delete $2; }
     ;
 
     /**** expressions ****/
@@ -523,7 +523,7 @@ expr: BINARY expr %prec UMINUS { $$ = new Ast_BinaryExpr($2); }
     ;
 
     /* statements: select statement */
-stmt: select_stmt { $$ = new Ast_Stmt($1); printf("%s", $1->format().c_str()); }
+stmt: select_stmt { $$ = new Ast_Stmt($1); }
     ;
 
 select_stmt: SELECT select_opts select_expr_list    { $$ = new Ast_SelectStmt(static_cast<Ast_SelectStmt::_select_opts>($2), $3); }
@@ -593,8 +593,8 @@ select_expr_list: select_expr { $$ = new Ast_SelectExprList($1); }
     ;
 
 select_expr: expr opt_as_alias { $$ = new Ast_SelectExpr($1, $2); }
-    | NAME '.' '*' { $$ = nullptr; }
-    | '*' { $$ = nullptr; }
+    | NAME '.' '*' { $$ = new Ast_SelectExpr($1); }
+    | '*' { $$ = new Ast_SelectExpr(nullptr); }
     ;
 
 opt_as_alias: AS NAME   { $$ = $2; }
@@ -697,7 +697,7 @@ delete_stmt: DELETE delete_opts FROM delete_list USING table_references opt_wher
                 { $$ = new Ast_DeleteStmt(static_cast<enum Ast_DeleteStmt::_delete_opts>($2), $4, $6, $7); }
     ;
 
-stmt: insert_stmt { $$ = new Ast_Stmt($1); printf("%s", $1->format().c_str()); }
+stmt: insert_stmt { $$ = new Ast_Stmt($1); }
     ;
 
 insert_stmt: INSERT insert_opts opt_into NAME opt_col_names VALUES insert_vals_list opt_ondupupdate 
@@ -737,13 +737,13 @@ insert_stmt: INSERT insert_opts opt_into NAME SET insert_asgn_list opt_ondupupda
                 $$ = new Ast_InsertStmt(static_cast<enum Ast_InsertStmt::_insert_opts>($2), $4, $6, $7); }
     ;
 
-insert_asgn_list: NAME COMPARISON expr { if($2 != 4) { yyerror("bad insert assignment to %s", $1); YYERROR; }
+insert_asgn_list: NAME COMPARISON expr { if($2 != 1) { yyerror("bad insert assignment to %s", $1); YYERROR; }
                     $$ = new Ast_InsertAsgnList($1, $3); }
-    | NAME COMPARISON DEFAULT { if($2 != 4) { yyerror("bad insert assignment to %s", $1); YYERROR; }
+    | NAME COMPARISON DEFAULT { if($2 != 1) { yyerror("bad insert assignment to %s", $1); YYERROR; }
                     $$ = new Ast_InsertAsgnList($1, NULL); }
-    | insert_asgn_list ',' NAME COMPARISON expr { if($4 != 4) { yyerror("bad assignment to %s", $1); YYERROR; }
+    | insert_asgn_list ',' NAME COMPARISON expr { if($4 != 1) { yyerror("bad assignment to %s", $1); YYERROR; }
                     $1->addInsertAsgn($3, $5); $$ = $1; }
-    | insert_asgn_list ',' NAME COMPARISON DEFAULT { if($4 != 4) {yyerror("bad assignment to %s", $1); YYERROR; }
+    | insert_asgn_list ',' NAME COMPARISON DEFAULT { if($4 != 1) {yyerror("bad assignment to %s", $1); YYERROR; }
                     $1->addInsertAsgn($3, NULL); $$ = $1; }
     ;
 
@@ -780,13 +780,13 @@ update_opts: /* nil */ { $$ = 0; }
     | insert_opts IGNORE { $$ = $1 | 010; }
     ;
 
-update_asgn_list: NAME COMPARISON expr { if ($2 != 4) { yyerror("bad update assignment to %s", $1); YYERROR; }
+update_asgn_list: NAME COMPARISON expr { if ($2 != 1) { yyerror("bad update assignment to %s", $1); YYERROR; }
                         $$ = new Ast_UpdateAsgnList($1, $3); }
-    | NAME '.' NAME COMPARISON expr { if($4 != 4) {yyerror("bad update assignment to %s", $1); YYERROR; }
+    | NAME '.' NAME COMPARISON expr { if($4 != 1) {yyerror("bad update assignment to %s", $1); YYERROR; }
         $$ = new Ast_UpdateAsgnList($1, $3, $5); }
-    | update_asgn_list ',' NAME COMPARISON expr { if($4 != 4) {yyerror("bad update assignment to %s", $3); YYERROR; }
+    | update_asgn_list ',' NAME COMPARISON expr { if($4 != 1) {yyerror("bad update assignment to %s", $3); YYERROR; }
         $1->addUpdateAsgn($3, $5); $$ = $1; }
-    | update_asgn_list ',' NAME '.' NAME COMPARISON expr { if ($6 != 4) {yyerror("bad update assignment to %s.%s", $3, $5); YYERROR; }
+    | update_asgn_list ',' NAME '.' NAME COMPARISON expr { if ($6 != 1) {yyerror("bad update assignment to %s.%s", $3, $5); YYERROR; }
         $1->addUpdateAsgn($3, $5, $7); $$ = $1; }
     ;
 
@@ -934,7 +934,7 @@ set_list: set_expr { $$ = new Ast_SetList($1); }
     | set_list ',' set_expr { $1->addSetExpr($3), $$ = $1; }
     ;
 
-set_expr: USERVAR COMPARISON expr { if($2 != 4) {yyerror("bad set to @%s", $1); YYERROR; } 
+set_expr: USERVAR COMPARISON expr { if($2 != 1) {yyerror("bad set to @%s", $1); YYERROR; } 
         $$ = new Ast_SetExpr($1, $3); }
     | USERVAR ASSIGN expr { $$ = new Ast_SetExpr($1, $3); }
     ;

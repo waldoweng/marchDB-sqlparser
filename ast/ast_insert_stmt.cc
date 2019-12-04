@@ -111,15 +111,15 @@ std::string Ast_InsertStmt::format() {
             this->insertOptName(this->_val_list->insert_opts).c_str(),
             this->_val_list->name.get(),
             this->_val_list->opt_col_names->format().c_str(),
-            this->_val_list->opt_col_names->format().c_str(),
-            this->_val_list->opt_dupupdate->format().c_str()
+            this->_val_list->insert_val_list->format().c_str(),
+            this->_val_list->opt_dupupdate ? this->_val_list->opt_dupupdate->format().c_str() : ""
         );
     case Ast_InsertStmt::INSERT_TYPE_ASGNLIST:
         return this->rawf("INSERT %s INTO %s SET %s %s", 
             this->insertOptName(this->_asgn_list->insert_opts).c_str(),
             this->_asgn_list->name.get(),
             this->_asgn_list->insert_asgn_list->format().c_str(),
-            this->_asgn_list->opt_ondupupdate->format().c_str()
+            this->_asgn_list->opt_ondupupdate ? this->_asgn_list->opt_ondupupdate->format().c_str() : ""
         );
     case Ast_InsertStmt::INSERT_TYPE_SELECT:
         return this->rawf("INSERT %s INTO %s %s %s %s", 
@@ -127,7 +127,7 @@ std::string Ast_InsertStmt::format() {
             this->_select->name.get(),
             this->_select->opt_col_names->format().c_str(),
             this->_select->select_stmt->format().c_str(),
-            this->_select->opt_ondupupdate->format().c_str()
+            this->_select->opt_ondupupdate ? this->_select->opt_ondupupdate->format().c_str() : ""
         );
     default:
         break;

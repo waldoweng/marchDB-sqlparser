@@ -30,7 +30,7 @@ public:
     virtual std::string format();
 
 private:
-    std::vector<GroupByItem> groupby_list;
+    std::vector<GroupByItem *> groupby_list;
 };
 
 
