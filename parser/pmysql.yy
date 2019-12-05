@@ -449,7 +449,7 @@ val_list: expr { $$ = new Ast_ValList($1); }
     | expr ',' val_list { $3->addExpr($1); $$ = $3; }
     ;
 
-opt_val_list: /* nil */ { $$ = 0; }
+opt_val_list: /* nil */ { $$ = nullptr; }
     | val_list { $$ = $1; }
     ;
 

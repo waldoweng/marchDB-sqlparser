@@ -569,7 +569,7 @@ Ast_RegularFunctionExpr::~Ast_RegularFunctionExpr() {
 std::string Ast_RegularFunctionExpr::format() {
     return this->rawf("%s(%s)", 
         this->func_name.get(),
-        this->params->format().c_str()
+        this->params ? this->params->format().c_str() : ""
     );
 }
 
