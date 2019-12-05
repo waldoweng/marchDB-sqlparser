@@ -232,34 +232,6 @@ Ast_ArithmeticExpr::~Ast_ArithmeticExpr() {
     }
 }
 
-const char * Ast_ArithmeticExpr::arithmeticTypeName(enum Ast_ArithmeticExpr::arithmetic_type arithmetic_type) {
-    static const char names[22][32] = {
-        "ADD",
-        "SUB",
-        "MUL",
-        "DIV",
-        "MOD",
-        "NEG",
-        "AND",
-        "OR",
-        "XOR",
-        "BITOR",
-        "BITAND",
-        "BITXOR",
-        "LEFT SHIFT",
-        "RIGHT SHIFT",
-        "NOT",
-        "COMPARE EQUAL",
-        "COMPARE NULL SAFE EQUAL",
-        "COMPARE GREATER EQUAL",
-        "COMPARE GREATER THAN",
-        "COMPARE LESSER EQUAL",
-        "COMPARE LESSER THAN",
-        "COMPARE NOT EQUAL"
-    };
-    return names[arithmetic_type];
-}
-
 const char * Ast_ArithmeticExpr::arithmeticTypeStr(enum Ast_ArithmeticExpr::arithmetic_type arithmetic_type) {
     static const char names[22][32] = {
         "+",
@@ -324,19 +296,6 @@ Ast_CompareExpr::Ast_CompareExpr(enum Ast_CompareExpr::compare_type compare_type
 Ast_CompareExpr::~Ast_CompareExpr() {
     if (lhs) delete lhs;
     if (rhs) delete rhs;
-}
-
-const char * Ast_CompareExpr::compareTypeName(enum Ast_CompareExpr::compare_type compare_type) {
-    static const char names[7][32] = {
-        "COMPARE EQUAL",
-        "COMPARE NULL SAFE EQUAL",
-        "COMPARE GREATER EQUAL",
-        "COMPARE GREATER THAN",
-        "COMPARE LESSER EQUAL",
-        "COMPARE LESSER THAN",
-        "COMPARE NOT EQUAL"
-    };
-    return names[compare_type];
 }
 
 const char * Ast_CompareExpr::compareTypeStr(enum Ast_CompareExpr::compare_type compare_type) {

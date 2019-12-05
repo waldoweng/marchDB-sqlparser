@@ -405,7 +405,7 @@ expr: NAME          { $$ = new Ast_LiteralExpr(Ast_LiteralExpr::LiteralTypeName,
     | STRING        { $$ = new Ast_LiteralExpr(Ast_LiteralExpr::LiteralTypeString, nullptr, $1); }
     | INTNUM        { $$ = new Ast_LiteralExpr($1); }
     | APPROXNUM     { $$ = new Ast_LiteralExpr($1); }
-    | BOOL          { $$ = new Ast_LiteralExpr($1); }
+    | BOOL          { $$ = new Ast_LiteralExpr($1 == 1); }
     ;
 
 expr: expr '+' expr { $$ = new Ast_ArithmeticExpr(Ast_ArithmeticExpr::CompoundTypeAdd, $1, $3); }

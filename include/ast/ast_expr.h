@@ -170,7 +170,6 @@ public:
     virtual std::string format();
 
 private:
-    const char * arithmeticTypeName(arithmetic_type arithmetic_type);
     const char * arithmeticTypeStr(arithmetic_type arithmetic_type);
 
 private:
@@ -212,7 +211,6 @@ public:
     virtual std::string format();
 
 private:
-    const char * compareTypeName(compare_type compare_type);
     const char * compareTypeStr(compare_type compare_type);
     const char * compareSubTypeName(compare_subtype compare_subtype);
 

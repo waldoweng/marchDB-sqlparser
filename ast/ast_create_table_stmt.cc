@@ -90,12 +90,14 @@ Ast_DataType::Ast_DataType(
         str = new Ast_DataType::StringType();
         str->length = length;
         str->binary_flag = binary_flag;
-        if (opt_csc->csc_type == Ast_OptCSC::CSC_TYPE_CHARSET) {
-            str->charset = std::move(opt_csc->value);
-            delete opt_csc;
-        } else if (opt_csc->csc_type == Ast_OptCSC::CSC_TYPE_COLLATE) {
-            str->collate = std::move(opt_csc->value);
-            delete opt_csc;
+        if (opt_csc) {
+            if (opt_csc->csc_type == Ast_OptCSC::CSC_TYPE_CHARSET) {
+                str->charset = std::move(opt_csc->value);
+                delete opt_csc;
+            } else if (opt_csc->csc_type == Ast_OptCSC::CSC_TYPE_COLLATE) {
+                str->collate = std::move(opt_csc->value);
+                delete opt_csc;
+            }
         }
         break;
     default:
@@ -116,12 +118,14 @@ Ast_DataType::Ast_DataType(
     case Ast_DataType::DATA_TYPE_SET:
         compond = new Ast_DataType::CompondType();
         compond->enum_list = enum_list;
-        if (opt_csc->csc_type == Ast_OptCSC::CSC_TYPE_CHARSET) {
-            compond->charset = std::move(opt_csc->value);
-            delete opt_csc;
-        } else if (opt_csc->csc_type == Ast_OptCSC::CSC_TYPE_COLLATE) {
-            compond->collate = std::move(opt_csc->value);
-            delete opt_csc;
+        if (opt_csc) {
+            if (opt_csc->csc_type == Ast_OptCSC::CSC_TYPE_CHARSET) {
+                compond->charset = std::move(opt_csc->value);
+                delete opt_csc;
+            } else if (opt_csc->csc_type == Ast_OptCSC::CSC_TYPE_COLLATE) {
+                compond->collate = std::move(opt_csc->value);
+                delete opt_csc;
+            }
         }
         break;
     default:

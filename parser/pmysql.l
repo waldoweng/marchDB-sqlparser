@@ -237,7 +237,7 @@ UTC_TIME        { return UTC_TIME; }
 UTC_TIMESTAMP   { return UTC_TIMESTAMP; }
 VALUES?         { return VALUES; }
 VARBINARY       { return VARBINARY; }
-VARCHAR(ACTER)  { return VARCHAR; }
+VARCHAR(ACTER)? { return VARCHAR; }
 VARYING         { return VARYING; }
 WHEN            { return WHEN; }
 WHERE           { return WHERE; }
@@ -337,5 +337,5 @@ COUNT               {
     /* everything else */
 [ \t]       /* whitespace */
 \n          { yycolumn = 1; } 
-.           {yyerror("mystery character '%s'", *yytext); }
+.           {yyerror("mystery character '%s'", yytext); }
 
